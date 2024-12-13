@@ -21,32 +21,39 @@ class MainActivity : AppCompatActivity() {
     private lateinit var client: OkHttpClient
     private lateinit var webSocket: WebSocket
     private lateinit var chatFragment: ChatFragment
+    lateinit var roomName: String
+    private var userName: String = ""
+    private var isMember: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
-
+        roomName = "101"
+        userName = "huhaonan"
+        isMember = true
         initializeWebSocket()
         initView()
         webViewSetting()
 
-        //
-
         chatFragment = supportFragmentManager.findFragmentById(R.id.my_fragment) as ChatFragment
     }
 
+    /**
+     * 初始化WebSocket连接
+     */
     private fun initializeWebSocket() {
         client = OkHttpClient()
         val request = Request.Builder()
-            .url("ws://10.8.251.177:30873/chat/101")
+            .url( "ws://10.8.251.177:30873/chat?roomName=$roomName")
             .build()
         val listener = EchoWebSocketListener()
         webSocket = client.newWebSocket(request, listener)
-
-        // Get reference to ChatFragment
     }
 
+    /**
+     * 初始化view
+     */
     private fun initView() {
         videoWebView = findViewById(R.id.video_web_view)
         courseWebView = findViewById(R.id.course_web_view)
@@ -92,6 +99,14 @@ class MainActivity : AppCompatActivity() {
         webSocket.close(1000, "Goodbye!")
     }
 
+    fun sendMessage(message: String) {
+
+        webSocket.send(message)
+    }
+
+    fun getUserName(): String{
+        return userName;
+    }
     private inner class EchoWebSocketListener : WebSocketListener() {
         override fun onOpen(webSocket: WebSocket, response: Response) {
             webSocket.send("欢迎同学们来到直播间")
@@ -99,19 +114,13 @@ class MainActivity : AppCompatActivity() {
 
         override fun onMessage(webSocket: WebSocket, text: String) {
             runOnUiThread {
-                // Handle the received message
-                if (text != """{"c":4,"si":"server","sn":"server","t":"chat_count"}""") {
-                    // Handle the received message
-                    println("Receiving : $text")
+                // 定义正则表达式，匹配 {"c":任意数字,"si":"server","sn":"server","t":"chat_count"}
+                val pattern = Regex("""\{"c":\d+,"si":"server","sn":"server","t":"chat_count"\}""")
+
+
+                if (!pattern.matches(text)) {
                     chatFragment.addMessage(text)
                 }
-            }
-        }
-
-        override fun onMessage(webSocket: WebSocket, bytes: ByteString) {
-            runOnUiThread {
-                // Handle the received bytes
-                println("Receiving bytes : ${bytes.hex()}")
             }
         }
 

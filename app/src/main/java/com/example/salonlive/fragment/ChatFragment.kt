@@ -7,8 +7,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.salonlive.ChatAdapter
+import com.example.salonlive.MainActivity
 import com.example.salonlive.databinding.FragmentChatBinding
 
+/**
+ * 聊天片段
+ */
 class ChatFragment : Fragment() {
 
     private var _binding: FragmentChatBinding? = null
@@ -29,7 +33,6 @@ class ChatFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         chatAdapter = ChatAdapter()
         binding.recyclerViewChat.layoutManager = LinearLayoutManager(context)
         binding.recyclerViewChat.adapter = chatAdapter
@@ -37,13 +40,17 @@ class ChatFragment : Fragment() {
         // Handle send button click
         binding.buttonSend.setOnClickListener {
             val message = binding.editTextMessage.text.toString()
+            val userName = (activity as? MainActivity)?.getUserName()
             if (message.isNotEmpty()) {
-                chatAdapter.addMessage(message)
                 binding.editTextMessage.text.clear()
                 binding.recyclerViewChat.scrollToPosition(chatAdapter.itemCount - 1)
+                // Send message via WebSocket
+                (activity as? MainActivity)?.sendMessage("$userName:  "+message)
             }
         }
     }
+
+
 
     fun addMessage(message: String) {
         chatAdapter.addMessage(message)
