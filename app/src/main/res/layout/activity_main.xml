@@ -11,7 +11,6 @@
     android:layout_width="0dp"
     android:layout_height="match_parent"
    android:layout_weight="4">
-   android:orientation="vertical">
    <WebView
        android:id="@+id/course_web_view"
        android:layout_width="match_parent"
@@ -21,7 +20,6 @@
    <LinearLayout
        android:layout_width="0dp"
        android:layout_height="match_parent"
-       android:background="#666666"
        android:layout_weight="1"
        android:orientation="vertical">
       <WebView
@@ -32,7 +30,12 @@
       <LinearLayout
           android:layout_width="match_parent"
           android:layout_height="0dp"
-         android:layout_weight="7"
-          android:background="#006666"/>
+         android:layout_weight="7">
+         <fragment
+             android:id="@+id/my_fragment"
+             android:name="com.example.salonlive.fragment.ChatFragment"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent" />
+      </LinearLayout>
    </LinearLayout>
 </LinearLayout>
