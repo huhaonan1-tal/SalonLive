@@ -6,8 +6,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.salonlive.adapter.ChatAdapter
 import com.example.salonlive.MainActivity
+import com.example.salonlive.adapter.ChatAdapter
+import com.example.salonlive.UserBLL
 import com.example.salonlive.data.ChatMessage
 import com.example.salonlive.databinding.FragmentChatBinding
 
@@ -41,20 +42,14 @@ class ChatFragment : Fragment() {
         // Handle send button click
         binding.buttonSend.setOnClickListener {
             val message = binding.editTextMessage.text.toString()
-            val userName = (activity as? MainActivity)?.getUserName()
-            val userId = (activity as? MainActivity)?.getUserId()
             if (message.isNotEmpty()) {
                 binding.editTextMessage.text.clear()
                 binding.recyclerViewChat.scrollToPosition(chatAdapter.itemCount - 1)
                 // Send message via WebSocket
-                if (userName != null && userId != null) {
-                    (activity as? MainActivity)?.sendMessage(ChatMessage(userName,message))
-                }
+                (activity as? MainActivity)?.sendMessage(ChatMessage(UserBLL.userName, message))
             }
         }
     }
-
-
 
     fun addMessage(message: ChatMessage) {
         chatAdapter.addMessage(message)

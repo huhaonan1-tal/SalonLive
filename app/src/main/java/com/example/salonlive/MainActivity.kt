@@ -1,7 +1,6 @@
 package com.example.salonlive
 
 import android.os.Bundle
-import android.os.Message
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.activity.enableEdgeToEdge
@@ -24,18 +23,13 @@ class MainActivity : AppCompatActivity() {
     private lateinit var webSocket: WebSocket
     private lateinit var chatFragment: ChatFragment
     lateinit var roomName: String
-    private var userName: String = ""
-    private var userId: Int = 0;
-    private var isMember: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
         roomName = "101"
-        userName = "huhaonan"
-        userId = 1
-        isMember = true
+        UserBLL.initialize("huhaonan") // 初始化用户信息
         initializeWebSocket()
         initView()
         webViewSetting()
@@ -49,7 +43,7 @@ class MainActivity : AppCompatActivity() {
     private fun initializeWebSocket() {
         client = OkHttpClient()
         val request = Request.Builder()
-            .url( "ws://10.8.251.177:30873/chat?roomName=$roomName")
+            .url("ws://10.8.251.177:30873/chat?roomName=$roomName")
             .build()
         val listener = EchoWebSocketListener()
         webSocket = client.newWebSocket(request, listener)
@@ -109,27 +103,19 @@ class MainActivity : AppCompatActivity() {
         webSocket.send(jsonMessage)
     }
 
-    fun getUserName(): String{
-        return userName;
-    }
-    fun getUserId(): Int{
-        return userId;
-    }
     private inner class EchoWebSocketListener : WebSocketListener() {
         override fun onOpen(webSocket: WebSocket, response: Response) {
-
-            chatFragment.addMessage(ChatMessage("","欢迎进入直播间"))
+            chatFragment.addMessage(ChatMessage("", "欢迎进入直播间"))
         }
-       /* val gson = Gson()
-        val chatData = gson.fromJson(text, ChatData::class.java)*/
+
         override fun onMessage(webSocket: WebSocket, text: String) {
             runOnUiThread {
                 // 定义正则表达式，匹配 {"c":任意数字,"si":"server","sn":"server","t":"chat_count"}
                 val pattern = Regex("""\{"c":\d+,"si":"server","sn":"server","t":"chat_count"\}""")
 
                 if (!pattern.matches(text)) {
-                     val gson = Gson()
-                     val chatData = gson.fromJson(text, ChatMessage::class.java)
+                    val gson = Gson()
+                    val chatData = gson.fromJson(text, ChatMessage::class.java)
                     chatFragment.addMessage(chatData)
                 }
             }

@@ -4,6 +4,8 @@ import android.graphics.Color
 import android.graphics.Typeface
 import android.text.Spannable
 import android.text.SpannableString
+import android.text.SpannableStringBuilder
+import android.text.TextUtils
 import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
 import android.view.Gravity
@@ -14,6 +16,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.salonlive.R
+import com.example.salonlive.UserBLL
 import com.example.salonlive.data.ChatMessage
 
 class ChatAdapter : RecyclerView.Adapter<ChatAdapter.ChatViewHolder>() {
@@ -65,8 +68,20 @@ class ChatAdapter : RecyclerView.Adapter<ChatAdapter.ChatViewHolder>() {
                     parentLayout.gravity = Gravity.CENTER
                 }
             }else{
-                textViewUserName.text = message.name+":  "
                 textViewMessage.text = message.message
+                val spannableStringBuilder = SpannableStringBuilder(message.name)
+                if(!TextUtils.isEmpty(message.name) && UserBLL.userName != message.name) {
+                    spannableStringBuilder.append(": ")
+                    spannableStringBuilder.setSpan(
+                        ForegroundColorSpan(Color.parseColor("#8B4513")),
+                        0,
+                        message.name.length+1,
+                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                    )
+                }
+
+
+                textViewUserName.text = spannableStringBuilder
             }
         }
     }
