@@ -42,11 +42,14 @@ class ChatFragment : Fragment() {
         binding.buttonSend.setOnClickListener {
             val message = binding.editTextMessage.text.toString()
             val userName = (activity as? MainActivity)?.getUserName()
+            val userId = (activity as? MainActivity)?.getUserId()
             if (message.isNotEmpty()) {
                 binding.editTextMessage.text.clear()
                 binding.recyclerViewChat.scrollToPosition(chatAdapter.itemCount - 1)
                 // Send message via WebSocket
-                (activity as? MainActivity)?.sendMessage("$userName:  "+message)
+                if (userName != null && userId != null) {
+                    (activity as? MainActivity)?.sendMessage(ChatMessage(userName,message))
+                }
             }
         }
     }

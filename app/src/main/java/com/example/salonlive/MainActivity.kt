@@ -25,8 +25,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var chatFragment: ChatFragment
     lateinit var roomName: String
     private var userName: String = ""
+    private var userId: Int = 0;
     private var isMember: Boolean = false
-    var userCount = 0;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,6 +34,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         roomName = "101"
         userName = "huhaonan"
+        userId = 1
         isMember = true
         initializeWebSocket()
         initView()
@@ -102,13 +103,17 @@ class MainActivity : AppCompatActivity() {
         webSocket.close(1000, "Goodbye!")
     }
 
-    fun sendMessage(message: String) {
-
-        webSocket.send(message)
+    fun sendMessage(message: ChatMessage) {
+        val gson = Gson()
+        val jsonMessage = gson.toJson(message)
+        webSocket.send(jsonMessage)
     }
 
     fun getUserName(): String{
         return userName;
+    }
+    fun getUserId(): Int{
+        return userId;
     }
     private inner class EchoWebSocketListener : WebSocketListener() {
         override fun onOpen(webSocket: WebSocket, response: Response) {
