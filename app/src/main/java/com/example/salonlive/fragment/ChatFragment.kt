@@ -6,8 +6,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.salonlive.ChatAdapter
+import com.example.salonlive.adapter.ChatAdapter
 import com.example.salonlive.MainActivity
+import com.example.salonlive.data.ChatMessage
 import com.example.salonlive.databinding.FragmentChatBinding
 
 /**
@@ -52,7 +53,7 @@ class ChatFragment : Fragment() {
 
 
 
-    fun addMessage(message: String) {
+    fun addMessage(message: ChatMessage) {
         chatAdapter.addMessage(message)
         binding.recyclerViewChat.scrollToPosition(chatAdapter.itemCount - 1)
     }

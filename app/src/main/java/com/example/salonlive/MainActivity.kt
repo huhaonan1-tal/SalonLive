@@ -1,17 +1,19 @@
 package com.example.salonlive
 
 import android.os.Bundle
+import android.os.Message
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import com.example.salonlive.data.ChatMessage
 import com.example.salonlive.fragment.ChatFragment
+import com.google.gson.Gson
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
 import okhttp3.WebSocket
 import okhttp3.WebSocketListener
-import okio.ByteString
 
 class MainActivity : AppCompatActivity() {
 
@@ -24,6 +26,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var roomName: String
     private var userName: String = ""
     private var isMember: Boolean = false
+    var userCount = 0;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -109,17 +112,20 @@ class MainActivity : AppCompatActivity() {
     }
     private inner class EchoWebSocketListener : WebSocketListener() {
         override fun onOpen(webSocket: WebSocket, response: Response) {
-            webSocket.send("欢迎同学们来到直播间")
-        }
 
+            chatFragment.addMessage(ChatMessage("","欢迎进入直播间"))
+        }
+       /* val gson = Gson()
+        val chatData = gson.fromJson(text, ChatData::class.java)*/
         override fun onMessage(webSocket: WebSocket, text: String) {
             runOnUiThread {
                 // 定义正则表达式，匹配 {"c":任意数字,"si":"server","sn":"server","t":"chat_count"}
                 val pattern = Regex("""\{"c":\d+,"si":"server","sn":"server","t":"chat_count"\}""")
 
-
                 if (!pattern.matches(text)) {
-                    chatFragment.addMessage(text)
+                     val gson = Gson()
+                     val chatData = gson.fromJson(text, ChatMessage::class.java)
+                    chatFragment.addMessage(chatData)
                 }
             }
         }

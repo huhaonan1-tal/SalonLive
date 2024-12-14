@@ -28,9 +28,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:textSize="12sp"
-            android:inputType="text"
-            android:textColor="#03A9F4"
-            android:textColorHighlight="#0000FF" />
+            android:inputType="text" />
 
         <Button
             android:id="@+id/button_send"
